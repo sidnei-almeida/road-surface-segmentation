@@ -21,6 +21,7 @@ Pipeline completo para **detectar e segmentar buracos (potholes)** em imagens e 
 [**Dataset**](#dataset) ·
 [**Pré-processamento**](#pré-processamento-de-vídeos) ·
 [**Métricas**](#métricas-de-treinamento) ·
+[**Avaliação**](#relatório-de-avaliação-em-amostras) ·
 [**Quick Start**](#quick-start) ·
 [**Estrutura**](#estrutura-do-projeto)
 
@@ -303,6 +304,7 @@ road-surface-segmentation/
 ├── 📄 README.md                          # Este documento
 ├── 📄 README_preprocessing.md              # Guia do script de vídeos
 ├── 🐍 prepare_road_videos.py               # Pré-processamento + TUI
+├── 🐍 evaluate_samples.py                  # Avaliação visual em amostras
 ├── 🐍 test_prepare_videos.py               # Testes do pipeline de vídeo
 │
 ├── 📓 notebooks/
@@ -319,7 +321,10 @@ road-surface-segmentation/
 │   ├── results.csv
 │   ├── confusion_matrix_normalized.png
 │   ├── MaskPR_curve.png
-│   └── val_batch*_pred.jpg
+│   ├── val_batch*_pred.jpg
+│   └── evaluation/                         # Relatório de inferência em amostras
+│       ├── evaluation_results.json
+│       └── valid_*.jpg / test_*.jpg
 │
 ├── 🎬 videos/          (gitignored)        # Vídeos dashcam brutos
 ├── 🖼️ frames/          (gitignored)        # Frames extraídos
@@ -344,6 +349,216 @@ Extraídos de `models/args.yaml`:
 | Learning rate | 0.001 → 0.02 (cosine) |
 | Augmentação | mosaic 0.2, RandAugment, flip 0.5 |
 | Device | NVIDIA Tesla T4 |
+
+---
+
+## Relatório de avaliação em amostras
+
+> Avaliação qualitativa e quantitativa do modelo `best.pt` em **16 imagens aleatórias** do dataset local (`/home/a1rm4x/Downloads/dataset`) — 8 de **valid** e 8 de **test**. Comparação visual entre anotações (GT) e predições do modelo.
+
+### Configuração do experimento
+
+| Parâmetro | Valor |
+|-----------|-------|
+| Modelo | `models/best.pt` (YOLO26s-seg, imgsz=768) |
+| Dataset | Roboflow Pothole Segmentation |
+| Confiança mínima | 0.25 |
+| IoU para match | 0.50 |
+| Amostragem | Aleatória (seed=42) |
+| Script | `evaluate_samples.py` |
+
+**Legenda nas imagens:** contorno verde = ground truth · overlay vermelho = predição do modelo
+
+### Resumo executivo
+
+<div align="center">
+
+| Métrica | Resultado |
+|---------|-----------|
+| **Imagens avaliadas** | 16 (8 valid + 8 test) |
+| **Taxa de acerto estrito** | **50%** (8/16 sem erro) |
+| **Taxa de detecção** | **100%** (todas as imagens com buraco foram detectadas) |
+| **Recall por instância** | **91,7%** (22 TP / 24 GT) |
+| **Precision por instância** | **53,7%** (22 TP / 41 predições) |
+| **Falsos negativos** | 2 instâncias |
+| **Falsos positivos** | 19 instâncias |
+
+</div>
+
+```mermaid
+pie title Veredito por imagem (n=16)
+    "Correto" : 8
+    "Parcial" : 8
+    "Perdido" : 0
+    "Falso positivo" : 0
+```
+
+| Veredito | Significado | Quantidade |
+|----------|-------------|------------|
+| ✅ **Correto** | Todas as instâncias GT detectadas, zero FP/FN | **8** |
+| ⚠️ **Parcial** | Detectou buracos reais, mas com FP ou FN extras | **8** |
+| ❌ **Perdido** | Buracos no GT não detectados | **0** |
+| 🚫 **Falso positivo** | Detecções sem buraco anotado | **0** |
+
+**Conclusão:** o modelo **identifica potholes de forma confiável** — nenhuma imagem ficou sem detecção. O principal ponto de melhoria é a **super-segmentação** (máscaras extras ou fragmentadas), especialmente em cenas com múltiplos buracos próximos.
+
+---
+
+### Resultados — Validation (8 imagens)
+
+| # | Imagem | GT | Pred | TP | FP | FN | IoU médio | Veredito |
+|---|--------|----|------|----|----|-----|-----------|----------|
+| 1 | `664_png` | 2 | 3 | 2 | 1 | 0 | 0.806 | ⚠️ Parcial |
+| 2 | `damaged-asphalt-pavement` | 1 | 2 | 1 | 1 | 0 | 0.581 | ⚠️ Parcial |
+| 3 | `44_png` | 2 | 2 | 2 | 0 | 0 | 0.760 | ✅ Correto |
+| 4 | `632_png` | 1 | 1 | 1 | 0 | 0 | 0.655 | ✅ Correto |
+| 5 | `2goufguo_pothole` | 1 | 1 | 1 | 0 | 0 | 0.884 | ✅ Correto |
+| 6 | `image24` | 3 | 7 | 2 | 5 | 1 | 0.635 | ⚠️ Parcial |
+| 7 | `768_png` | 4 | 10 | 3 | 7 | 1 | 0.706 | ⚠️ Parcial |
+| 8 | `684_png` | 2 | 2 | 2 | 0 | 0 | 0.727 | ✅ Correto |
+
+<p align="center"><strong>Valid — predições corretas</strong></p>
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="metrics/evaluation/valid_44_png_jpg.rf.kv9q7J6j7A3FxddVY2NT.jpg" width="400"><br>
+      <sub>✅ 44_png — 2/2 buracos, IoU 0.76</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="metrics/evaluation/valid_2goufguo_pothole_625x300_25_September_18_jpg.rf.Q4aAQZDWNk9jCcYWxpDX.jpg" width="400"><br>
+      <sub>✅ 2goufguo_pothole — 1/1 buraco, IoU 0.88</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="metrics/evaluation/valid_632_png_jpg.rf.LP79FwuYEa8agst7SCDS.jpg" width="400"><br>
+      <sub>✅ 632_png — 1/1 buraco, IoU 0.66</sub>
+    </td>
+    <td align="center">
+      <img src="metrics/evaluation/valid_684_png_jpg.rf.4Y0S2nPYtZCMKv8agExc.jpg" width="400"><br>
+      <sub>✅ 684_png — 2/2 buracos, IoU 0.73</sub>
+    </td>
+  </tr>
+</table>
+
+<p align="center"><strong>Valid — predições parciais (detectou, mas com extras)</strong></p>
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="metrics/evaluation/valid_768_png_jpg.rf.7uqLqz5Aw0Ch7sNlBz2P.jpg" width="400"><br>
+      <sub>⚠️ 768_png — 3/4 buracos, 7 FP (múltiplos buracos)</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="metrics/evaluation/valid_image24_jpeg.rf.1KA070KBBB1zBGkzdTjl.jpg" width="400"><br>
+      <sub>⚠️ image24 — 2/3 buracos, 5 FP</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="metrics/evaluation/valid_664_png_jpg.rf.dgDQaPYvW4DKdFdXdnJk.jpg" width="400"><br>
+      <sub>⚠️ 664_png — 2/2 buracos, 1 FP extra</sub>
+    </td>
+    <td align="center">
+      <img src="metrics/evaluation/valid_damaged-asphalt-pavement-road-potholes-260nw-1134687086_jpg.rf.cowgUL2z2LOORyGYz3p2.jpg" width="400"><br>
+      <sub>⚠️ damaged-asphalt — 1/1 buraco, 1 FP</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+### Resultados — Test (8 imagens)
+
+| # | Imagem | GT | Pred | TP | FP | FN | IoU médio | Veredito |
+|---|--------|----|------|----|----|-----|-----------|----------|
+| 1 | `891_png` | 1 | 2 | 1 | 1 | 0 | 0.711 | ⚠️ Parcial |
+| 2 | `image27` | 1 | 2 | 1 | 1 | 0 | 0.881 | ⚠️ Parcial |
+| 3 | `650_png` | 1 | 1 | 1 | 0 | 0 | 0.535 | ✅ Correto |
+| 4 | `images105` | 1 | 3 | 1 | 2 | 0 | 0.693 | ⚠️ Parcial |
+| 5 | `946_png` | 1 | 1 | 1 | 0 | 0 | 0.845 | ✅ Correto |
+| 6 | `978_png` | 1 | 1 | 1 | 0 | 0 | 0.700 | ✅ Correto |
+| 7 | `892_png` | 1 | 2 | 1 | 1 | 0 | 0.692 | ⚠️ Parcial |
+| 8 | `images125` | 1 | 1 | 1 | 0 | 0 | 0.590 | ✅ Correto |
+
+<p align="center"><strong>Test — predições corretas</strong></p>
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="metrics/evaluation/test_946_png_jpg.rf.VcnZyyMk5I37IBLZHKXm.jpg" width="400"><br>
+      <sub>✅ 946_png — 1/1 buraco, IoU 0.85</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="metrics/evaluation/test_978_png_jpg.rf.l7s0pebXb8SgWuuCMUoj.jpg" width="400"><br>
+      <sub>✅ 978_png — 1/1 buraco, IoU 0.70</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="metrics/evaluation/test_650_png_jpg.rf.0mNBxvaMGh7esqw6m0x9.jpg" width="400"><br>
+      <sub>✅ 650_png — 1/1 buraco, IoU 0.54</sub>
+    </td>
+    <td align="center">
+      <img src="metrics/evaluation/test_images125_jpg.rf.4hRdTtW5EXDvGbb5NoNz.jpg" width="400"><br>
+      <sub>✅ images125 — 1/1 buraco, IoU 0.59</sub>
+    </td>
+  </tr>
+</table>
+
+<p align="center"><strong>Test — predições parciais</strong></p>
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="metrics/evaluation/test_image27_jpeg.rf.KQ1zDfjzmo3URYjNO90k.jpg" width="400"><br>
+      <sub>⚠️ image27 — 1/1 buraco, 1 FP (IoU 0.88 no match)</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="metrics/evaluation/test_891_png_jpg.rf.c5dzztVnjINQOP5ejGPS.jpg" width="400"><br>
+      <sub>⚠️ 891_png — 1/1 buraco, 1 FP</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="metrics/evaluation/test_images105_jpg.rf.dIvL79ge9HDC9zoQqFXL.jpg" width="400"><br>
+      <sub>⚠️ images105 — 1/1 buraco, 2 FP</sub>
+    </td>
+    <td align="center">
+      <img src="metrics/evaluation/test_892_png_jpg.rf.YUwhxcoeUeWnyTkcpX2G.jpg" width="400"><br>
+      <sub>⚠️ 892_png — 1/1 buraco, 1 FP</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+### Análise dos erros
+
+| Padrão observado | Frequência | Impacto |
+|------------------|------------|---------|
+| **Super-segmentação** — modelo gera máscaras a mais | 8/16 imagens | FP elevados, recall mantido |
+| **Buracos múltiplos próximos** — confunde instâncias (`768_png`, `image24`) | 2 imagens | FN pontuais + muitos FP |
+| **Máscara extra adjacente** — detecta o buraco certo + fragmento | 6 imagens | FP=1 ou FP=2, sem FN |
+| **Falha total** — nenhum buraco detectado | 0 imagens | — |
+
+### Recomendações
+
+1. **Aumentar `conf`** para inferência (ex: 0.35–0.45) e reduzir FP em produção
+2. **Pós-processamento morfológico** — unir máscaras sobrepostas da mesma região
+3. **NMS de máscaras** — suprimir detecções redundantes antes do overlay
+4. **Retreino** com mais exemplos de cenas multi-pothole e hard negative mining
+
+### Reproduzir a avaliação
+
+```bash
+source .venv/bin/activate
+pip install ultralytics opencv-python numpy
+python evaluate_samples.py
+```
+
+Resultados salvos em `metrics/evaluation/` (imagens comparativas + `evaluation_results.json`).
 
 ---
 
