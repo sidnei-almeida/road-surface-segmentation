@@ -1,0 +1,28 @@
+# Vídeos de entrada (não versionar)
+videos/
+
+# Vídeos processados (desacelerados/acelerados)
+processed_videos/
+
+# Frames extraídos para anotação
+frames/
+frames_*/
+
+# Relatórios gerados pelo pré-processamento
+reports/
+
+# Ambiente Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Sistema / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
