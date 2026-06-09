@@ -4,7 +4,7 @@
 
 ### Segmentação inteligente de danos em vias com YOLO26
 
-Pipeline completo para **detectar e segmentar buracos (potholes)** em imagens e vídeos POV/dashcam — do pré-processamento de vídeo à inferência com máscaras de instância.
+Pipeline completo para **detectar e segmentar buracos (potholes)** em imagens e vídeos POV/dashcam, do pré-processamento de vídeo à inferência com máscaras de instância.
 
 <br>
 
@@ -58,15 +58,15 @@ O objetivo é produzir **máscaras de segmentação** de buracos em estrada, út
 
 ## Modelo
 
-### YOLO26s — Instance Segmentation
+### YOLO26s: Instance Segmentation
 
 Modelo fine-tuned a partir de `yolo26s-seg.pt` (Ultralytics), treinado em 3 estágios:
 
-1. **Baseline** — `imgsz=640`, 100 épocas, validação do pipeline
-2. **Fine-tune conservador** — learning rate baixo, augmentação reduzida
-3. **Alta resolução** — `imgsz=768`, `lr0=0.001`, melhor qualidade de máscara
+1. **Baseline:** `imgsz=640`, 100 épocas, validação do pipeline
+2. **Fine-tune conservador:** learning rate baixo, augmentação reduzida
+3. **Alta resolução:** `imgsz=768`, `lr0=0.001`, melhor qualidade de máscara
 
-### Resultados finais (época 28 — melhor checkpoint)
+### Resultados finais (época 28, melhor checkpoint)
 
 Métricas de validação no conjunto **292 imagens / 560 instâncias**:
 
@@ -110,7 +110,7 @@ results[0].show()
 
 ### Dataset de treinamento (Roboflow)
 
-Fonte: [Pothole Segmentation — Roboflow Universe](https://universe.roboflow.com/emotion-recognition-mcwg0/pothole-segmentation-g6hbh-193vt) · Licença **CC BY 4.0**
+Fonte: [Pothole Segmentation (Roboflow Universe)](https://universe.roboflow.com/emotion-recognition-mcwg0/pothole-segmentation-g6hbh-193vt) · Licença **CC BY 4.0**
 
 O dataset original continha classes duplicadas (`Pothole`, `Potholes`, `pothole`, `Manhole`, `Unmarked Bump`). Para o baseline, as variações foram **unificadas em uma única classe `pothole`**, mantendo o treino limpo e consistente.
 
@@ -118,7 +118,7 @@ O dataset original continha classes duplicadas (`Pothole`, `Potholes`, `pothole`
 |-------|---------|------------|
 | **Train** | 893 | 2.106 |
 | **Valid** | 292 | 560 |
-| **Test** | 348 | — |
+| **Test** | 348 | - |
 
 <p align="center">
   <img src="metrics/labels.jpg" alt="Distribuição de labels no dataset" width="720">
@@ -126,7 +126,7 @@ O dataset original continha classes duplicadas (`Pothole`, `Potholes`, `pothole`
   <em>Distribuição espacial e dimensional dos labels de segmentação</em>
 </p>
 
-### Dados próprios — vídeos dashcam
+### Dados próprios: vídeos dashcam
 
 Vídeos POV gravados em movimento, processados localmente pelo script de pré-processamento. **Não são versionados** (ver `.gitignore`).
 
@@ -158,7 +158,7 @@ O script [`prepare_road_videos.py`](prepare_road_videos.py) transforma vídeos d
 | `random` | Timestamps aleatórios distribuídos |
 | `uniform` | Espaçamento uniforme no tempo |
 | `smart` | Maior score global entre candidatos |
-| `hybrid` | **Padrão** — melhor frame por segmento temporal |
+| `hybrid` | **Padrão:** melhor frame por segmento temporal |
 
 ### Extração em escala (milhares de frames)
 
@@ -183,9 +183,9 @@ Documentação completa: [`README_preprocessing.md`](README_preprocessing.md)
 ### Curvas de aprendizado
 
 <p align="center">
-  <img src="metrics/results.png" alt="Curvas de treinamento — loss, precision, recall e mAP" width="900">
+  <img src="metrics/results.png" alt="Curvas de treinamento loss, precision, recall e mAP" width="900">
   <br>
-  <em>Evolução de loss e métricas ao longo de 53 épocas — convergência estável após ~20 épocas</em>
+  <em>Evolução de loss e métricas ao longo de 53 épocas, com convergência estável após ~20 épocas</em>
 </p>
 
 ### Curvas de performance
@@ -220,32 +220,32 @@ Comparação entre **labels** (ground truth) e **predições** do modelo:
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="metrics/val_batch0_labels.jpg" alt="Validation batch 0 — labels" width="420"><br>
-      <sub>Batch 0 — Labels</sub>
+      <img src="metrics/val_batch0_labels.jpg" alt="Validation batch 0 labels" width="420"><br>
+      <sub>Batch 0 Labels</sub>
     </td>
     <td align="center" width="50%">
-      <img src="metrics/val_batch0_pred.jpg" alt="Validation batch 0 — predictions" width="420"><br>
-      <sub>Batch 0 — Predições</sub>
+      <img src="metrics/val_batch0_pred.jpg" alt="Validation batch 0 predictions" width="420"><br>
+      <sub>Batch 0 Predições</sub>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="metrics/val_batch1_labels.jpg" alt="Validation batch 1 — labels" width="420"><br>
-      <sub>Batch 1 — Labels</sub>
+      <img src="metrics/val_batch1_labels.jpg" alt="Validation batch 1 labels" width="420"><br>
+      <sub>Batch 1 Labels</sub>
     </td>
     <td align="center">
-      <img src="metrics/val_batch1_pred.jpg" alt="Validation batch 1 — predictions" width="420"><br>
-      <sub>Batch 1 — Predições</sub>
+      <img src="metrics/val_batch1_pred.jpg" alt="Validation batch 1 predictions" width="420"><br>
+      <sub>Batch 1 Predições</sub>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="metrics/val_batch2_labels.jpg" alt="Validation batch 2 — labels" width="420"><br>
-      <sub>Batch 2 — Labels</sub>
+      <img src="metrics/val_batch2_labels.jpg" alt="Validation batch 2 labels" width="420"><br>
+      <sub>Batch 2 Labels</sub>
     </td>
     <td align="center">
-      <img src="metrics/val_batch2_pred.jpg" alt="Validation batch 2 — predictions" width="420"><br>
-      <sub>Batch 2 — Predições</sub>
+      <img src="metrics/val_batch2_pred.jpg" alt="Validation batch 2 predictions" width="420"><br>
+      <sub>Batch 2 Predições</sub>
     </td>
   </tr>
 </table>
@@ -354,7 +354,7 @@ Extraídos de `models/args.yaml`:
 
 ## Relatório de avaliação em amostras
 
-> Avaliação qualitativa e quantitativa do modelo `best.pt` em **16 imagens aleatórias** do dataset local (`/home/a1rm4x/Downloads/dataset`) — 8 de **valid** e 8 de **test**. Comparação visual entre anotações (GT) e predições do modelo.
+> Avaliação qualitativa e quantitativa do modelo `best.pt` em **16 imagens aleatórias** do dataset local (`/home/a1rm4x/Downloads/dataset`): 8 de **valid** e 8 de **test**. Comparação visual entre anotações (GT) e predições do modelo.
 
 ### Configuração do experimento
 
@@ -400,11 +400,11 @@ pie title Veredito por imagem (n=16)
 | ❌ **Perdido** | Buracos no GT não detectados | **0** |
 | 🚫 **Falso positivo** | Detecções sem buraco anotado | **0** |
 
-**Conclusão:** o modelo **identifica potholes de forma confiável** — nenhuma imagem ficou sem detecção. O principal ponto de melhoria é a **super-segmentação** (máscaras extras ou fragmentadas), especialmente em cenas com múltiplos buracos próximos.
+**Conclusão:** o modelo **identifica potholes de forma confiável**; nenhuma imagem ficou sem detecção. O principal ponto de melhoria é a **super-segmentação** (máscaras extras ou fragmentadas), especialmente em cenas com múltiplos buracos próximos.
 
 ---
 
-### Resultados — Validation (8 imagens)
+### Resultados: Validation (8 imagens)
 
 | # | Imagem | GT | Pred | TP | FP | FN | IoU médio | Veredito |
 |---|--------|----|------|----|----|-----|-----------|----------|
@@ -417,59 +417,59 @@ pie title Veredito por imagem (n=16)
 | 7 | `768_png` | 4 | 10 | 3 | 7 | 1 | 0.706 | ⚠️ Parcial |
 | 8 | `684_png` | 2 | 2 | 2 | 0 | 0 | 0.727 | ✅ Correto |
 
-<p align="center"><strong>Valid — predições corretas</strong></p>
+<p align="center"><strong>Valid | predições corretas</strong></p>
 
 <table>
   <tr>
     <td align="center" width="50%">
       <img src="metrics/evaluation/valid_44_png_jpg.rf.kv9q7J6j7A3FxddVY2NT.jpg" width="400"><br>
-      <sub>✅ 44_png — 2/2 buracos, IoU 0.76</sub>
+      <sub>✅ 44_png: 2/2 buracos, IoU 0.76</sub>
     </td>
     <td align="center" width="50%">
       <img src="metrics/evaluation/valid_2goufguo_pothole_625x300_25_September_18_jpg.rf.Q4aAQZDWNk9jCcYWxpDX.jpg" width="400"><br>
-      <sub>✅ 2goufguo_pothole — 1/1 buraco, IoU 0.88</sub>
+      <sub>✅ 2goufguo_pothole: 1/1 buraco, IoU 0.88</sub>
     </td>
   </tr>
   <tr>
     <td align="center">
       <img src="metrics/evaluation/valid_632_png_jpg.rf.LP79FwuYEa8agst7SCDS.jpg" width="400"><br>
-      <sub>✅ 632_png — 1/1 buraco, IoU 0.66</sub>
+      <sub>✅ 632_png: 1/1 buraco, IoU 0.66</sub>
     </td>
     <td align="center">
       <img src="metrics/evaluation/valid_684_png_jpg.rf.4Y0S2nPYtZCMKv8agExc.jpg" width="400"><br>
-      <sub>✅ 684_png — 2/2 buracos, IoU 0.73</sub>
+      <sub>✅ 684_png: 2/2 buracos, IoU 0.73</sub>
     </td>
   </tr>
 </table>
 
-<p align="center"><strong>Valid — predições parciais (detectou, mas com extras)</strong></p>
+<p align="center"><strong>Valid | predições parciais (detectou, mas com extras)</strong></p>
 
 <table>
   <tr>
     <td align="center" width="50%">
       <img src="metrics/evaluation/valid_768_png_jpg.rf.7uqLqz5Aw0Ch7sNlBz2P.jpg" width="400"><br>
-      <sub>⚠️ 768_png — 3/4 buracos, 7 FP (múltiplos buracos)</sub>
+      <sub>⚠️ 768_png: 3/4 buracos, 7 FP (múltiplos buracos)</sub>
     </td>
     <td align="center" width="50%">
       <img src="metrics/evaluation/valid_image24_jpeg.rf.1KA070KBBB1zBGkzdTjl.jpg" width="400"><br>
-      <sub>⚠️ image24 — 2/3 buracos, 5 FP</sub>
+      <sub>⚠️ image24: 2/3 buracos, 5 FP</sub>
     </td>
   </tr>
   <tr>
     <td align="center">
       <img src="metrics/evaluation/valid_664_png_jpg.rf.dgDQaPYvW4DKdFdXdnJk.jpg" width="400"><br>
-      <sub>⚠️ 664_png — 2/2 buracos, 1 FP extra</sub>
+      <sub>⚠️ 664_png: 2/2 buracos, 1 FP extra</sub>
     </td>
     <td align="center">
       <img src="metrics/evaluation/valid_damaged-asphalt-pavement-road-potholes-260nw-1134687086_jpg.rf.cowgUL2z2LOORyGYz3p2.jpg" width="400"><br>
-      <sub>⚠️ damaged-asphalt — 1/1 buraco, 1 FP</sub>
+      <sub>⚠️ damaged-asphalt: 1/1 buraco, 1 FP</sub>
     </td>
   </tr>
 </table>
 
 ---
 
-### Resultados — Test (8 imagens)
+### Resultados: Test (8 imagens)
 
 | # | Imagem | GT | Pred | TP | FP | FN | IoU médio | Veredito |
 |---|--------|----|------|----|----|-----|-----------|----------|
@@ -482,52 +482,52 @@ pie title Veredito por imagem (n=16)
 | 7 | `892_png` | 1 | 2 | 1 | 1 | 0 | 0.692 | ⚠️ Parcial |
 | 8 | `images125` | 1 | 1 | 1 | 0 | 0 | 0.590 | ✅ Correto |
 
-<p align="center"><strong>Test — predições corretas</strong></p>
+<p align="center"><strong>Test | predições corretas</strong></p>
 
 <table>
   <tr>
     <td align="center" width="50%">
       <img src="metrics/evaluation/test_946_png_jpg.rf.VcnZyyMk5I37IBLZHKXm.jpg" width="400"><br>
-      <sub>✅ 946_png — 1/1 buraco, IoU 0.85</sub>
+      <sub>✅ 946_png: 1/1 buraco, IoU 0.85</sub>
     </td>
     <td align="center" width="50%">
       <img src="metrics/evaluation/test_978_png_jpg.rf.l7s0pebXb8SgWuuCMUoj.jpg" width="400"><br>
-      <sub>✅ 978_png — 1/1 buraco, IoU 0.70</sub>
+      <sub>✅ 978_png: 1/1 buraco, IoU 0.70</sub>
     </td>
   </tr>
   <tr>
     <td align="center">
       <img src="metrics/evaluation/test_650_png_jpg.rf.0mNBxvaMGh7esqw6m0x9.jpg" width="400"><br>
-      <sub>✅ 650_png — 1/1 buraco, IoU 0.54</sub>
+      <sub>✅ 650_png: 1/1 buraco, IoU 0.54</sub>
     </td>
     <td align="center">
       <img src="metrics/evaluation/test_images125_jpg.rf.4hRdTtW5EXDvGbb5NoNz.jpg" width="400"><br>
-      <sub>✅ images125 — 1/1 buraco, IoU 0.59</sub>
+      <sub>✅ images125: 1/1 buraco, IoU 0.59</sub>
     </td>
   </tr>
 </table>
 
-<p align="center"><strong>Test — predições parciais</strong></p>
+<p align="center"><strong>Test | predições parciais</strong></p>
 
 <table>
   <tr>
     <td align="center" width="50%">
       <img src="metrics/evaluation/test_image27_jpeg.rf.KQ1zDfjzmo3URYjNO90k.jpg" width="400"><br>
-      <sub>⚠️ image27 — 1/1 buraco, 1 FP (IoU 0.88 no match)</sub>
+      <sub>⚠️ image27: 1/1 buraco, 1 FP (IoU 0.88 no match)</sub>
     </td>
     <td align="center" width="50%">
       <img src="metrics/evaluation/test_891_png_jpg.rf.c5dzztVnjINQOP5ejGPS.jpg" width="400"><br>
-      <sub>⚠️ 891_png — 1/1 buraco, 1 FP</sub>
+      <sub>⚠️ 891_png: 1/1 buraco, 1 FP</sub>
     </td>
   </tr>
   <tr>
     <td align="center">
       <img src="metrics/evaluation/test_images105_jpg.rf.dIvL79ge9HDC9zoQqFXL.jpg" width="400"><br>
-      <sub>⚠️ images105 — 1/1 buraco, 2 FP</sub>
+      <sub>⚠️ images105: 1/1 buraco, 2 FP</sub>
     </td>
     <td align="center">
       <img src="metrics/evaluation/test_892_png_jpg.rf.YUwhxcoeUeWnyTkcpX2G.jpg" width="400"><br>
-      <sub>⚠️ 892_png — 1/1 buraco, 1 FP</sub>
+      <sub>⚠️ 892_png: 1/1 buraco, 1 FP</sub>
     </td>
   </tr>
 </table>
@@ -538,16 +538,16 @@ pie title Veredito por imagem (n=16)
 
 | Padrão observado | Frequência | Impacto |
 |------------------|------------|---------|
-| **Super-segmentação** — modelo gera máscaras a mais | 8/16 imagens | FP elevados, recall mantido |
-| **Buracos múltiplos próximos** — confunde instâncias (`768_png`, `image24`) | 2 imagens | FN pontuais + muitos FP |
-| **Máscara extra adjacente** — detecta o buraco certo + fragmento | 6 imagens | FP=1 ou FP=2, sem FN |
-| **Falha total** — nenhum buraco detectado | 0 imagens | — |
+| **Super-segmentação:** modelo gera máscaras a mais | 8/16 imagens | FP elevados, recall mantido |
+| **Buracos múltiplos próximos:** confunde instâncias (`768_png`, `image24`) | 2 imagens | FN pontuais + muitos FP |
+| **Máscara extra adjacente:** detecta o buraco certo + fragmento | 6 imagens | FP=1 ou FP=2, sem FN |
+| **Falha total:** nenhum buraco detectado | 0 imagens | - |
 
 ### Recomendações
 
-1. **Aumentar `conf`** para inferência (ex: 0.35–0.45) e reduzir FP em produção
-2. **Pós-processamento morfológico** — unir máscaras sobrepostas da mesma região
-3. **NMS de máscaras** — suprimir detecções redundantes antes do overlay
+1. **Aumentar `conf`** para inferência (ex: 0.35 a 0.45) e reduzir FP em produção
+2. **Pós-processamento morfológico:** unir máscaras sobrepostas da mesma região
+3. **NMS de máscaras:** suprimir detecções redundantes antes do overlay
 4. **Retreino** com mais exemplos de cenas multi-pothole e hard negative mining
 
 ### Reproduzir a avaliação
@@ -574,7 +574,7 @@ Resultados salvos em `metrics/evaluation/` (imagens comparativas + `evaluation_r
 
 <div align="center">
 
-**Road Surface Segmentation** — Computer Vision aplicada à infraestrutura viária
+**Road Surface Segmentation** | Computer Vision aplicada à infraestrutura viária
 
 Desenvolvido com YOLO26 · OpenCV · Ultralytics
 
